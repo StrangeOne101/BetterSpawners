@@ -1,0 +1,15 @@
+name: BetterSpawners
+main: com.strangeone101.betterspawners.BetterSpawners
+description: Allows the mining, changing, and setting of spawners. In a simple yet basic way.
+version: 1.4
+author: StrangeOne101
+commands:
+  spawner:
+    description: Sets a spawner to the specified mob type.
+    usage: /spawner <mob>
+    permission: betterspawners.set
+    permission-message: You don't have permission to use this command!
+permissions:
+  spawner:
+    description: Sets a spawner.
+    default: op
