@@ -1,7 +1,7 @@
 name: BetterSpawners
 main: com.strangeone101.betterspawners.BetterSpawners
 description: Allows the mining, changing, and setting of spawners. In a simple yet basic way.
-version: 1.4
+version: 1.4.2
 author: StrangeOne101
 commands:
   spawner:

@@ -127,7 +127,9 @@ public class BetterSpawners extends JavaPlugin implements Listener
         this.spawnerMobs.add(new Mob(EntityType.VILLAGER, "Villager", animal, "villager"));
         this.spawnerMobs.add(new Mob(EntityType.WITCH, "Witch", mob, "witch"));
         this.spawnerMobs.add(new Mob(EntityType.WITHER, "Wither", mob, "wither", "witherboss"));
-        this.spawnerMobs.add(new Mob(EntityType.WOLF, "Wolf", mob, "wolf", "dog"));
+        this.spawnerMobs.add(new Mob(EntityType.WOLF, "Wolf", animal, "wolf", "dog"));
+        this.spawnerMobs.add(new Mob(EntityType.ZOMBIE, "Zombie", mob, "zombie"));
+        
     }
     
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) 
@@ -307,6 +309,7 @@ public class BetterSpawners extends JavaPlugin implements Listener
     {
     	ItemStack item = event.getItemInHand();
     	List<String> lore;
+    	if (item == null) return;
     	if (item.getItemMeta().hasLore())
     	{
     	  	lore = item.getItemMeta().getLore();
@@ -338,20 +341,6 @@ public class BetterSpawners extends JavaPlugin implements Listener
     
     public boolean setSpawner(CraftCreatureSpawner spawner, String mob)
     {
-    	/*if (mob.equalsIgnoreCase("spiderpig")) //Easteregg :3
-    	{
-    		NBTTagCompound nbt = new NBTTagCompound();
-    		spawner.getTileEntity().b(nbt);
-    		nbt.setString("EntityId", "Pig");
-    		nbt.setString("CustomName", "Spider Pig!");
-    		nbt.setByte("CustomNameVisible", (byte)1);
-    		NBTTagCompound riding = new NBTTagCompound();
-    		riding.setString("id", "Spider");
-    		nbt.set("Riding", riding);
-    		spawner.getTileEntity().a(nbt);
-    		spawner.setSpawnedType(EntityType.SPIDER);
-    		return true;
-    	}*/
     	for (Object o : this.spawnerMobs.toArray())
     	{
     		Mob m = (Mob) o;
