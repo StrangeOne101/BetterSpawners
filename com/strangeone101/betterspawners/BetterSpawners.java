@@ -1,11 +1,5 @@
 package com.strangeone101.betterspawners;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -24,6 +18,14 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class BetterSpawners extends JavaPlugin implements Listener
 {
@@ -55,7 +57,7 @@ public class BetterSpawners extends JavaPlugin implements Listener
 		}
 	}
 	
-	public List<Mob> spawnerMobs = new ArrayList<Mob>();
+	public Map<String, Mob> spawnerMobs = new HashMap<>();
 	
 	
 	/**Gets the blocks that are invisible to the game while setting spawners. E.g. So you can set spawners even with a torch on top*/
@@ -81,54 +83,54 @@ public class BetterSpawners extends JavaPlugin implements Listener
         ChatColor mob = ChatColor.DARK_RED;
         ChatColor animal = ChatColor.AQUA;
         
-        this.spawnerMobs.add(new Mob(EntityType.ARMOR_STAND, "ArmorStand", other, "armorstand"));
+        this.spawnerMobs.put("ArmorStand", new Mob(EntityType.ARMOR_STAND, "ArmorStand", other, "armorstand"));
         //this.spawnerMobs.add(new Mob(EntityType.ARROW, "Arrow", other, "arrow"));
-        this.spawnerMobs.add(new Mob(EntityType.BAT, "Bat", animal, "bat"));
-        this.spawnerMobs.add(new Mob(EntityType.BLAZE, "Blaze", mob, "blaze"));
+        this.spawnerMobs.put("Bat", new Mob(EntityType.BAT, "Bat", animal, "bat"));
+        this.spawnerMobs.put("Blaze", new Mob(EntityType.BLAZE, "Blaze", mob, "blaze"));
         //this.spawnerMobs.add(new Mob(EntityType.BOAT, "Boat", other, "boat")); //Doesnt work
-        this.spawnerMobs.add(new Mob(EntityType.CAVE_SPIDER, "CaveSpider", mob, "cavespider"));
-        this.spawnerMobs.add(new Mob(EntityType.CHICKEN, "Chicken", animal, "chicken"));
-        this.spawnerMobs.add(new Mob(EntityType.COW, "Cow", animal, "cow"));
-        this.spawnerMobs.add(new Mob(EntityType.CREEPER, "Creeper", mob, "creeper"));
+        this.spawnerMobs.put("CaveSpider", new Mob(EntityType.CAVE_SPIDER, "CaveSpider", mob, "cavespider"));
+        this.spawnerMobs.put("Chicken", new Mob(EntityType.CHICKEN, "Chicken", animal, "chicken"));
+        this.spawnerMobs.put("Cow", new Mob(EntityType.COW, "Cow", animal, "cow"));
+        this.spawnerMobs.put("Creeper", new Mob(EntityType.CREEPER, "Creeper", mob, "creeper"));
         //this.spawnerMobs.add(new Mob(EntityType.ENDER_CRYSTAL, "EnderCrystal", other, "endercrystal"));
-        this.spawnerMobs.add(new Mob(EntityType.ENDER_DRAGON, "EnderDragon", mob, "enderdragon"));
-        this.spawnerMobs.add(new Mob(EntityType.ENDERMAN, "Enderman", mob, "enderman"));
-        this.spawnerMobs.add(new Mob(EntityType.ENDERMITE, "Endermite", mob, "endermite"));
-        this.spawnerMobs.add(new Mob(EntityType.THROWN_EXP_BOTTLE, "ExpBottle", other, "experienceorb", "xporb", "exporb", "xpbottle", "expbottle"));
+        this.spawnerMobs.put("EnderDragon", new Mob(EntityType.ENDER_DRAGON, "EnderDragon", mob, "enderdragon"));
+        this.spawnerMobs.put("Enderman", new Mob(EntityType.ENDERMAN, "Enderman", mob, "enderman"));
+        this.spawnerMobs.put("Endermite", new Mob(EntityType.ENDERMITE, "Endermite", mob, "endermite"));
+        this.spawnerMobs.put("ExpBottle", new Mob(EntityType.THROWN_EXP_BOTTLE, "ExpBottle", other, "experienceorb", "xporb", "exporb", "xpbottle", "expbottle"));
         //this.spawnerMobs.add(new Mob(EntityType.FALLING_BLOCK, "FallingSand", other, "fallingsand", "fallingblock"));
         //this.spawnerMobs.add(new Mob(EntityType.FIREBALL, "Fireball", other, "fireball"));
-        this.spawnerMobs.add(new Mob(EntityType.GHAST, "Ghast", mob, "ghast"));
-        this.spawnerMobs.add(new Mob(EntityType.GIANT, "Giant", mob, "giant"));
-        this.spawnerMobs.add(new Mob(EntityType.GUARDIAN, "Guardian", mob, "guardian"));
-        this.spawnerMobs.add(new Mob(EntityType.HORSE, "Horse", animal, "horse"));
-        this.spawnerMobs.add(new Mob(EntityType.IRON_GOLEM, "IronGolem", animal, "irongolem"));
-        this.spawnerMobs.add(new Mob(EntityType.MAGMA_CUBE, "MagmaCube", mob, "magmacube", "lavaslime", "magmaslime"));
-        this.spawnerMobs.add(new Mob(EntityType.MINECART, "Minecaft", other, "minecart"));
-        this.spawnerMobs.add(new Mob(EntityType.MINECART_CHEST, "ChestMinecart", other, "minecartchest", "chestminecart"));
-        this.spawnerMobs.add(new Mob(EntityType.MINECART_COMMAND, "CommandBlockMinecart", other, "minecartcommandblock", "commandminecart", "commandblockminecart", "minecartcommand"));
-        this.spawnerMobs.add(new Mob(EntityType.MINECART_FURNACE, "PoweredMinecart", other, "poweredminecart", "furnaceminecart", "minecartfurnace"));
-        this.spawnerMobs.add(new Mob(EntityType.MINECART_HOPPER, "HopperMinecart", other, "hopperminecart", "minecarthopper"));
-        this.spawnerMobs.add(new Mob(EntityType.MINECART_MOB_SPAWNER, "SpawnerMinecart", other, "spawnerminecart", "minecartspawner", "minecartmobspawner"));
-        this.spawnerMobs.add(new Mob(EntityType.MINECART_TNT, "TntMinecart", other, "tntminecart", "minecarttnt"));
-        this.spawnerMobs.add(new Mob(EntityType.MUSHROOM_COW, "Mooshroom", animal, "mooshroom", "mushroomcow"));
-        this.spawnerMobs.add(new Mob(EntityType.OCELOT, "Ocelot", animal, "ocelot", "cat"));
-        this.spawnerMobs.add(new Mob(EntityType.PIG, "Pig", animal, "pig"));
-        this.spawnerMobs.add(new Mob(EntityType.PIG_ZOMBIE, "ZombiePigman", mob, "zombiepigman", "pigzombie", "zombiepig"));
-        //this.spawnerMobs.add(new Mob(EntityType.PRIMED_TNT, "PrimedTnt", other, "primedtnt", "tnt"));
-        this.spawnerMobs.add(new Mob(EntityType.RABBIT, "Rabbit", animal, "rabbit", "bunny"));
-        this.spawnerMobs.add(new Mob(EntityType.SHEEP, "Sheep", animal, "sheep"));
-        this.spawnerMobs.add(new Mob(EntityType.SILVERFISH, "Silverfish", mob, "silverfish"));
-        this.spawnerMobs.add(new Mob(EntityType.SKELETON, "Skeleton", mob, "skeleton"));
-        this.spawnerMobs.add(new Mob(EntityType.SLIME, "Slime", mob, "slime"));
-        //this.spawnerMobs.add(new Mob(EntityType.SMALL_FIREBALL, "SmallFireball", other, "smallfireball", "fireballsmall"));
-        this.spawnerMobs.add(new Mob(EntityType.SNOWMAN, "SnowGolem", animal, "snowgolem", "snowman", "golem"));
-        this.spawnerMobs.add(new Mob(EntityType.SPIDER, "Spider", mob, "spider"));
-        this.spawnerMobs.add(new Mob(EntityType.SQUID, "Squid", animal, "squid"));
-        this.spawnerMobs.add(new Mob(EntityType.VILLAGER, "Villager", animal, "villager"));
-        this.spawnerMobs.add(new Mob(EntityType.WITCH, "Witch", mob, "witch"));
-        this.spawnerMobs.add(new Mob(EntityType.WITHER, "Wither", mob, "wither", "witherboss"));
-        this.spawnerMobs.add(new Mob(EntityType.WOLF, "Wolf", animal, "wolf", "dog"));
-        this.spawnerMobs.add(new Mob(EntityType.ZOMBIE, "Zombie", mob, "zombie"));
+        this.spawnerMobs.put("Ghast", new Mob(EntityType.GHAST, "Ghast", mob, "ghast"));
+        this.spawnerMobs.put("Giant", new Mob(EntityType.GIANT, "Giant", mob, "giant"));
+        this.spawnerMobs.put("Guardian", new Mob(EntityType.GUARDIAN, "Guardian", mob, "guardian"));
+        this.spawnerMobs.put("Horse", new Mob(EntityType.HORSE, "Horse", animal, "horse"));
+        this.spawnerMobs.put("IronGolem", new Mob(EntityType.IRON_GOLEM, "IronGolem", animal, "irongolem"));
+        this.spawnerMobs.put("MagmaCube", new Mob(EntityType.MAGMA_CUBE, "MagmaCube", mob, "magmacube", "lavaslime", "magmaslime"));
+        this.spawnerMobs.put("Minecart", new Mob(EntityType.MINECART, "Minecart", other, "minecart"));
+        this.spawnerMobs.put("ChestMinecart", new Mob(EntityType.MINECART_CHEST, "ChestMinecart", other, "minecartchest", "chestminecart"));
+        this.spawnerMobs.put("CommandBlockMinecart", new Mob(EntityType.MINECART_COMMAND, "CommandBlockMinecart", other, "minecartcommandblock", "commandminecart", "commandblockminecart", "minecartcommand"));
+        this.spawnerMobs.put("PoweredMinecart", new Mob(EntityType.MINECART_FURNACE, "PoweredMinecart", other, "poweredminecart", "furnaceminecart", "minecartfurnace"));
+        this.spawnerMobs.put("HopperMinecart", new Mob(EntityType.MINECART_HOPPER, "HopperMinecart", other, "hopperminecart", "minecarthopper"));
+        this.spawnerMobs.put("SpawnerMinecart", new Mob(EntityType.MINECART_MOB_SPAWNER, "SpawnerMinecart", other, "spawnerminecart", "minecartspawner", "minecartmobspawner"));
+        this.spawnerMobs.put("TntMinecart", new Mob(EntityType.MINECART_TNT, "TntMinecart", other, "tntminecart", "minecarttnt"));
+        this.spawnerMobs.put("Mooshroom", new Mob(EntityType.MUSHROOM_COW, "Mooshroom", animal, "mooshroom", "mushroomcow"));
+        this.spawnerMobs.put("Ocelot", new Mob(EntityType.OCELOT, "Ocelot", animal, "ocelot", "cat"));
+        this.spawnerMobs.put("Pig", new Mob(EntityType.PIG, "Pig", animal, "pig"));
+        this.spawnerMobs.put("ZombiePigman", new Mob(EntityType.PIG_ZOMBIE, "ZombiePigman", mob, "zombiepigman", "pigzombie", "zombiepig"));
+        //this.spawnerMobs.put(new Mob(EntityType.PRIMED_TNT, "PrimedTnt", other, "primedtnt", "tnt"));
+        this.spawnerMobs.put("Rabbit", new Mob(EntityType.RABBIT, "Rabbit", animal, "rabbit", "bunny"));
+        this.spawnerMobs.put("Sheep", new Mob(EntityType.SHEEP, "Sheep", animal, "sheep"));
+        this.spawnerMobs.put("SilverFish", new Mob(EntityType.SILVERFISH, "Silverfish", mob, "silverfish"));
+        this.spawnerMobs.put("Skeleton", new Mob(EntityType.SKELETON, "Skeleton", mob, "skeleton"));
+        this.spawnerMobs.put("Slime", new Mob(EntityType.SLIME, "Slime", mob, "slime"));
+        //this.spawnerMobs.put(new Mob(EntityType.SMALL_FIREBALL, "SmallFireball", other, "smallfireball", "fireballsmall"));
+        this.spawnerMobs.put("SnowGolem", new Mob(EntityType.SNOWMAN, "SnowGolem", animal, "snowgolem", "snowman", "golem"));
+        this.spawnerMobs.put("Spider", new Mob(EntityType.SPIDER, "Spider", mob, "spider"));
+        this.spawnerMobs.put("Squid", new Mob(EntityType.SQUID, "Squid", animal, "squid"));
+        this.spawnerMobs.put("Villager", new Mob(EntityType.VILLAGER, "Villager", animal, "villager"));
+        this.spawnerMobs.put("Witch", new Mob(EntityType.WITCH, "Witch", mob, "witch"));
+        this.spawnerMobs.put("Wither", new Mob(EntityType.WITHER, "Wither", mob, "wither", "witherboss"));
+        this.spawnerMobs.put("Wolf", new Mob(EntityType.WOLF, "Wolf", animal, "wolf", "dog"));
+        this.spawnerMobs.put("Zombie", new Mob(EntityType.ZOMBIE, "Zombie", mob, "zombie"));
         
     }
     
@@ -157,7 +159,7 @@ public class BetterSpawners extends JavaPlugin implements Listener
 			else if(args[0].toLowerCase().equals("list"))
 			{
 				String s = "";
-				for (Object o : this.spawnerMobs.toArray())
+				for (Object o : this.spawnerMobs.values())
 				{
 					Mob m = ((Mob)o);
 					if (sender.hasPermission("betterspawners.set." + m.displayName.toLowerCase()))
@@ -173,7 +175,7 @@ public class BetterSpawners extends JavaPlugin implements Listener
     			{
     				boolean flag = false;
     	        	Mob mob = null;
-    	        	for (Object m : spawnerMobs.toArray())
+    	        	for (Object m : spawnerMobs.values())
     	        	{
     	        		if (((Mob)m).isMatch(args[0].toLowerCase()))
     	        		{
@@ -254,7 +256,7 @@ public class BetterSpawners extends JavaPlugin implements Listener
         	if (debug) {this.getLogger().info(type.toString());}
         	boolean flag = false;
         	Mob mob = null;
-        	for (Object m : spawnerMobs.toArray())
+        	for (Object m : spawnerMobs.values())
         	{
         		if (type == ((Mob)m).TYPE)
         		{
@@ -341,7 +343,7 @@ public class BetterSpawners extends JavaPlugin implements Listener
     
     public boolean setSpawner(CraftCreatureSpawner spawner, String mob)
     {
-    	for (Object o : this.spawnerMobs.toArray())
+    	for (Object o : this.spawnerMobs.values())
     	{
     		Mob m = (Mob) o;
     		if (m.isMatch(mob.toLowerCase()))
