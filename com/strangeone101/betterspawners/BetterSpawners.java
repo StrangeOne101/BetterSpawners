@@ -7,8 +7,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_8_R3.block.CraftBlock;
-import org.bukkit.craftbukkit.v1_8_R3.block.CraftCreatureSpawner;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,26 +26,40 @@ import java.util.Map;
 import java.util.Set;
 
 public class BetterSpawners extends JavaPlugin implements Listener
-{
-	protected ChatColor r = ChatColor.RED;
-	protected ChatColor y = ChatColor.YELLOW;
-	protected ChatColor a = ChatColor.AQUA;
-	
+{	
 	public boolean debug = false;
+	
+	public enum Hostility
+	{
+		PASSIVE (ChatColor.AQUA), 
+		AGRESSIVE (ChatColor.RED), 
+		NEUTRAL (ChatColor.RED), 
+		ENTITY (ChatColor.YELLOW);
+		
+		Hostility(ChatColor c) 
+		{
+			color = c;
+		}
+		ChatColor color;
+	}
 	
 	public class Mob
 	{
 		public EntityType TYPE = EntityType.PIG;
 		public String displayName = "Pig";
-		public ChatColor color;
+		public Hostility hostility;
 		public String[] aliases;
 		
-		public Mob(EntityType type, String displayName, ChatColor color, String... aliases)
+		public Mob(EntityType type, String displayName, Hostility hostile, String... aliases)
 		{
 			this.TYPE = type;
 			this.displayName = displayName;
-			this.color = color;
+			this.hostility = hostile;
 			this.aliases = aliases;
+			for (String s : aliases)
+			{
+				spawnerMobs.put(s.toLowerCase(), this);
+			}
 		}
 		
 		/**If this contains the matching entitytype*/
@@ -78,60 +90,48 @@ public class BetterSpawners extends JavaPlugin implements Listener
     public void onEnable()
 	{
         this.getServer().getPluginManager().registerEvents(this, this);
-        
-        ChatColor other = ChatColor.YELLOW;
-        ChatColor mob = ChatColor.DARK_RED;
-        ChatColor animal = ChatColor.AQUA;
-        
-        this.spawnerMobs.put("ArmorStand", new Mob(EntityType.ARMOR_STAND, "ArmorStand", other, "armorstand"));
-        //this.spawnerMobs.add(new Mob(EntityType.ARROW, "Arrow", other, "arrow"));
-        this.spawnerMobs.put("Bat", new Mob(EntityType.BAT, "Bat", animal, "bat"));
-        this.spawnerMobs.put("Blaze", new Mob(EntityType.BLAZE, "Blaze", mob, "blaze"));
-        //this.spawnerMobs.add(new Mob(EntityType.BOAT, "Boat", other, "boat")); //Doesnt work
-        this.spawnerMobs.put("CaveSpider", new Mob(EntityType.CAVE_SPIDER, "CaveSpider", mob, "cavespider"));
-        this.spawnerMobs.put("Chicken", new Mob(EntityType.CHICKEN, "Chicken", animal, "chicken"));
-        this.spawnerMobs.put("Cow", new Mob(EntityType.COW, "Cow", animal, "cow"));
-        this.spawnerMobs.put("Creeper", new Mob(EntityType.CREEPER, "Creeper", mob, "creeper"));
-        //this.spawnerMobs.add(new Mob(EntityType.ENDER_CRYSTAL, "EnderCrystal", other, "endercrystal"));
-        this.spawnerMobs.put("EnderDragon", new Mob(EntityType.ENDER_DRAGON, "EnderDragon", mob, "enderdragon"));
-        this.spawnerMobs.put("Enderman", new Mob(EntityType.ENDERMAN, "Enderman", mob, "enderman"));
-        this.spawnerMobs.put("Endermite", new Mob(EntityType.ENDERMITE, "Endermite", mob, "endermite"));
-        this.spawnerMobs.put("ExpBottle", new Mob(EntityType.THROWN_EXP_BOTTLE, "ExpBottle", other, "experienceorb", "xporb", "exporb", "xpbottle", "expbottle"));
-        //this.spawnerMobs.add(new Mob(EntityType.FALLING_BLOCK, "FallingSand", other, "fallingsand", "fallingblock"));
-        //this.spawnerMobs.add(new Mob(EntityType.FIREBALL, "Fireball", other, "fireball"));
-        this.spawnerMobs.put("Ghast", new Mob(EntityType.GHAST, "Ghast", mob, "ghast"));
-        this.spawnerMobs.put("Giant", new Mob(EntityType.GIANT, "Giant", mob, "giant"));
-        this.spawnerMobs.put("Guardian", new Mob(EntityType.GUARDIAN, "Guardian", mob, "guardian"));
-        this.spawnerMobs.put("Horse", new Mob(EntityType.HORSE, "Horse", animal, "horse"));
-        this.spawnerMobs.put("IronGolem", new Mob(EntityType.IRON_GOLEM, "IronGolem", animal, "irongolem"));
-        this.spawnerMobs.put("MagmaCube", new Mob(EntityType.MAGMA_CUBE, "MagmaCube", mob, "magmacube", "lavaslime", "magmaslime"));
-        this.spawnerMobs.put("Minecart", new Mob(EntityType.MINECART, "Minecart", other, "minecart"));
-        this.spawnerMobs.put("ChestMinecart", new Mob(EntityType.MINECART_CHEST, "ChestMinecart", other, "minecartchest", "chestminecart"));
-        this.spawnerMobs.put("CommandBlockMinecart", new Mob(EntityType.MINECART_COMMAND, "CommandBlockMinecart", other, "minecartcommandblock", "commandminecart", "commandblockminecart", "minecartcommand"));
-        this.spawnerMobs.put("PoweredMinecart", new Mob(EntityType.MINECART_FURNACE, "PoweredMinecart", other, "poweredminecart", "furnaceminecart", "minecartfurnace"));
-        this.spawnerMobs.put("HopperMinecart", new Mob(EntityType.MINECART_HOPPER, "HopperMinecart", other, "hopperminecart", "minecarthopper"));
-        this.spawnerMobs.put("SpawnerMinecart", new Mob(EntityType.MINECART_MOB_SPAWNER, "SpawnerMinecart", other, "spawnerminecart", "minecartspawner", "minecartmobspawner"));
-        this.spawnerMobs.put("TntMinecart", new Mob(EntityType.MINECART_TNT, "TntMinecart", other, "tntminecart", "minecarttnt"));
-        this.spawnerMobs.put("Mooshroom", new Mob(EntityType.MUSHROOM_COW, "Mooshroom", animal, "mooshroom", "mushroomcow"));
-        this.spawnerMobs.put("Ocelot", new Mob(EntityType.OCELOT, "Ocelot", animal, "ocelot", "cat"));
-        this.spawnerMobs.put("Pig", new Mob(EntityType.PIG, "Pig", animal, "pig"));
-        this.spawnerMobs.put("ZombiePigman", new Mob(EntityType.PIG_ZOMBIE, "ZombiePigman", mob, "zombiepigman", "pigzombie", "zombiepig"));
-        //this.spawnerMobs.put(new Mob(EntityType.PRIMED_TNT, "PrimedTnt", other, "primedtnt", "tnt"));
-        this.spawnerMobs.put("Rabbit", new Mob(EntityType.RABBIT, "Rabbit", animal, "rabbit", "bunny"));
-        this.spawnerMobs.put("Sheep", new Mob(EntityType.SHEEP, "Sheep", animal, "sheep"));
-        this.spawnerMobs.put("SilverFish", new Mob(EntityType.SILVERFISH, "Silverfish", mob, "silverfish"));
-        this.spawnerMobs.put("Skeleton", new Mob(EntityType.SKELETON, "Skeleton", mob, "skeleton"));
-        this.spawnerMobs.put("Slime", new Mob(EntityType.SLIME, "Slime", mob, "slime"));
-        //this.spawnerMobs.put(new Mob(EntityType.SMALL_FIREBALL, "SmallFireball", other, "smallfireball", "fireballsmall"));
-        this.spawnerMobs.put("SnowGolem", new Mob(EntityType.SNOWMAN, "SnowGolem", animal, "snowgolem", "snowman", "golem"));
-        this.spawnerMobs.put("Spider", new Mob(EntityType.SPIDER, "Spider", mob, "spider"));
-        this.spawnerMobs.put("Squid", new Mob(EntityType.SQUID, "Squid", animal, "squid"));
-        this.spawnerMobs.put("Villager", new Mob(EntityType.VILLAGER, "Villager", animal, "villager"));
-        this.spawnerMobs.put("Witch", new Mob(EntityType.WITCH, "Witch", mob, "witch"));
-        this.spawnerMobs.put("Wither", new Mob(EntityType.WITHER, "Wither", mob, "wither", "witherboss"));
-        this.spawnerMobs.put("Wolf", new Mob(EntityType.WOLF, "Wolf", animal, "wolf", "dog"));
-        this.spawnerMobs.put("Zombie", new Mob(EntityType.ZOMBIE, "Zombie", mob, "zombie"));
-        
+              
+        new Mob(EntityType.ARMOR_STAND, "ArmorStand", Hostility.ENTITY, "armorstand");
+        new Mob(EntityType.BAT, "Bat", Hostility.PASSIVE);
+        new Mob(EntityType.BLAZE, "Blaze", Hostility.AGRESSIVE);
+        new Mob(EntityType.CAVE_SPIDER, "CaveSpider", Hostility.AGRESSIVE);
+        new Mob(EntityType.CHICKEN, "Chicken", Hostility.PASSIVE);
+        new Mob(EntityType.COW, "Cow", Hostility.PASSIVE);
+        new Mob(EntityType.CREEPER, "Creeper", Hostility.AGRESSIVE);
+        new Mob(EntityType.ENDER_DRAGON, "EnderDragon", Hostility.AGRESSIVE, "dragon");
+        new Mob(EntityType.ENDERMAN, "Enderman", Hostility.AGRESSIVE);
+        new Mob(EntityType.ENDERMITE, "Endermite", Hostility.AGRESSIVE);
+        new Mob(EntityType.THROWN_EXP_BOTTLE, "ExpBottle", Hostility.ENTITY, "experienceorb", "xporb", "exporb", "xpbottle", "xp");
+        new Mob(EntityType.GHAST, "Ghast", Hostility.AGRESSIVE);
+        new Mob(EntityType.GIANT, "Giant", Hostility.AGRESSIVE);
+        new Mob(EntityType.GUARDIAN, "Guardian", Hostility.AGRESSIVE);
+        new Mob(EntityType.HORSE, "Horse", Hostility.PASSIVE);
+        new Mob(EntityType.IRON_GOLEM, "IronGolem", Hostility.PASSIVE);
+        new Mob(EntityType.MAGMA_CUBE, "MagmaCube", Hostility.AGRESSIVE, "lavaslime", "magmaslime");
+        new Mob(EntityType.MINECART, "Minecart", Hostility.ENTITY, "minecart");
+        new Mob(EntityType.MINECART_CHEST, "ChestMinecart", Hostility.ENTITY, "minecartchest");
+        new Mob(EntityType.MINECART_COMMAND, "CommandBlockMinecart", Hostility.ENTITY, "minecartcommandblock", "commandminecart", "minecartcommand");
+        new Mob(EntityType.MINECART_FURNACE, "PoweredMinecart", Hostility.ENTITY, "furnaceminecart", "minecartfurnace");
+        new Mob(EntityType.MINECART_HOPPER, "HopperMinecart", Hostility.ENTITY, "minecarthopper");
+        new Mob(EntityType.MINECART_MOB_SPAWNER, "SpawnerMinecart", Hostility.ENTITY, "minecartspawner", "minecartmobspawner");
+        new Mob(EntityType.MINECART_TNT, "TntMinecart", Hostility.ENTITY, "minecarttnt");
+        new Mob(EntityType.MUSHROOM_COW, "Mooshroom", Hostility.PASSIVE, "mushroomcow");
+        new Mob(EntityType.OCELOT, "Ocelot", Hostility.PASSIVE, "cat");
+        new Mob(EntityType.PIG, "Pig", Hostility.PASSIVE);
+        new Mob(EntityType.PIG_ZOMBIE, "ZombiePigman", Hostility.AGRESSIVE, "pigzombie", "zombiepig");
+        new Mob(EntityType.RABBIT, "Rabbit", Hostility.PASSIVE, "rabbit", "bunny");
+        new Mob(EntityType.SHEEP, "Sheep", Hostility.PASSIVE, "sheep");
+        new Mob(EntityType.SILVERFISH, "Silverfish", Hostility.AGRESSIVE);
+        new Mob(EntityType.SKELETON, "Skeleton", Hostility.AGRESSIVE);
+        new Mob(EntityType.SLIME, "Slime", Hostility.AGRESSIVE);
+        new Mob(EntityType.SNOWMAN, "SnowGolem", Hostility.PASSIVE, "snowman", "golem");
+        new Mob(EntityType.SPIDER, "Spider", Hostility.AGRESSIVE);
+        new Mob(EntityType.SQUID, "Squid", Hostility.PASSIVE);
+        new Mob(EntityType.VILLAGER, "Villager", Hostility.PASSIVE, "testificate");
+        new Mob(EntityType.WITCH, "Witch", Hostility.AGRESSIVE);
+        new Mob(EntityType.WITHER, "Wither", Hostility.AGRESSIVE, "witherboss");
+        new Mob(EntityType.WOLF, "Wolf", Hostility.PASSIVE, "dog");
+        new Mob(EntityType.ZOMBIE, "Zombie", Hostility.AGRESSIVE);
     }
     
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) 
@@ -193,10 +193,8 @@ public class BetterSpawners extends JavaPlugin implements Listener
         				{ 						
        						if (sender.hasPermission("betterspawners.set."+mob.displayName.toLowerCase()))
     						{
-    							CraftCreatureSpawner spawner = (CraftCreatureSpawner)target.getBlock().getState();
-            		            //spawner.setSpawnedType((EntityType.fromName(this.getMobTypedToName(args[0]))));
-            		            this.setSpawner(spawner, mob.displayName);
-    							sender.sendMessage(ChatColor.GOLD + "Spawner set to " + mob.color + mob.displayName);
+            		            this.setSpawner(target.getBlock(), mob.displayName);
+    							sender.sendMessage(ChatColor.GOLD + "Spawner set to " + mob.hostility.color + mob.displayName);
             		            return true;
     						}
     						else
@@ -211,10 +209,10 @@ public class BetterSpawners extends JavaPlugin implements Listener
     						{
         						ItemMeta meta = hand.getItemMeta();
             					ArrayList<String> lore = new ArrayList<String>();
-            					lore.add(mob.color + mob.displayName);
+            					lore.add(mob.hostility.color + mob.displayName);
             					meta.setLore(lore);
             					hand.setItemMeta(meta);
-            					sender.sendMessage(ChatColor.GOLD + "Spawner set to " + mob.color + mob.displayName);
+            					sender.sendMessage(ChatColor.GOLD + "Spawner set to " + mob.hostility.color + mob.displayName);
             					return true;
     						}
         					else
@@ -245,14 +243,12 @@ public class BetterSpawners extends JavaPlugin implements Listener
     
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
-        Block b1 = event.getBlock();
+        Block block = event.getBlock();
         Player player = event.getPlayer();
-        CraftCreatureSpawner spawner;
         EntityType type;
-        if (b1.getType() == Material.MOB_SPAWNER)
+        if (block.getType() == Material.MOB_SPAWNER)
         {
-        	spawner = (CraftCreatureSpawner)b1.getState();
-        	type = spawner.getSpawnedType();
+        	type = NMSHandler.getType(block);
         	if (debug) {this.getLogger().info(type.toString());}
         	boolean flag = false;
         	Mob mob = null;
@@ -272,7 +268,7 @@ public class BetterSpawners extends JavaPlugin implements Listener
             }
             if (player.hasPermission("betterspawners.mine."+mob.displayName.toLowerCase()))
             {
-            	if (b1.getType() == Material.MOB_SPAWNER && player.getGameMode() != GameMode.CREATIVE && (player.getItemInHand().getType().equals(Material.DIAMOND_PICKAXE) || player.getItemInHand().getType().equals(Material.GOLD_PICKAXE) || player.getItemInHand().getType().equals(Material.IRON_PICKAXE) || player.getItemInHand().getType().equals(Material.STONE_PICKAXE) || player.getItemInHand().getType().equals(Material.WOOD_PICKAXE)))
+            	if (block.getType() == Material.MOB_SPAWNER && player.getGameMode() != GameMode.CREATIVE && (player.getItemInHand().getType().equals(Material.DIAMOND_PICKAXE) || player.getItemInHand().getType().equals(Material.GOLD_PICKAXE) || player.getItemInHand().getType().equals(Material.IRON_PICKAXE) || player.getItemInHand().getType().equals(Material.STONE_PICKAXE) || player.getItemInHand().getType().equals(Material.WOOD_PICKAXE)))
                 {
                     ItemStack item = new ItemStack(Material.MOB_SPAWNER);
                     ItemMeta meta = item.getItemMeta();
@@ -283,11 +279,11 @@ public class BetterSpawners extends JavaPlugin implements Listener
                     }
                     else
                     {
-                    	 lore.add(mob.color + mob.displayName);
+                    	 lore.add(mob.hostility.color + mob.displayName);
                     }
                     meta.setLore(lore);
                     item.setItemMeta(meta);
-                    player.getWorld().dropItemNaturally(b1.getLocation(), item);
+                    player.getWorld().dropItemNaturally(block.getLocation(), item);
                     event.setExpToDrop(0);
                 } 
             }
@@ -317,40 +313,35 @@ public class BetterSpawners extends JavaPlugin implements Listener
     	  	lore = item.getItemMeta().getLore();
     	  	if (item.getType() == Material.MOB_SPAWNER && lore.size() > 0)
         	{
-        		CraftBlock block = (CraftBlock) event.getBlock();
-            	CraftCreatureSpawner spawner = (CraftCreatureSpawner)block.getState();
-        		if (lore.size() > 1)
+        		Block block = event.getBlock();
+            	if (lore.size() > 1)
         		{
-        			String lore2 = lore.get(1).replace(ChatColor.DARK_RED.toString(), "").replaceAll(ChatColor.YELLOW.toString(), "").replaceAll(ChatColor.AQUA.toString(), "").replaceAll(ChatColor.DARK_GREEN.toString(), "");
-        			String lore1 = lore.get(0).replace(ChatColor.DARK_RED.toString(), "").replaceAll(ChatColor.YELLOW.toString(), "").replaceAll(ChatColor.AQUA.toString(), "").replaceAll(ChatColor.DARK_GREEN.toString(), "");
-        			if (!this.setSpawner(spawner, lore2))
+        			String lore2 = lore.get(1);
+        			String lore1 = lore.get(0);
+        			if (!this.setSpawner(block, lore2))
             		{
-        				if (!this.setSpawner(spawner, lore1))
+        				if (!this.setSpawner(block, lore1))
                 		{
-                			this.setSpawner(spawner, "pig");
-                			event.getPlayer().sendMessage(ChatColor.RED + "The type of spawner isn't known, so a pig spawner has been placed.");
+                			this.setSpawner(block, "pig");
+                			event.getPlayer().sendMessage(ChatColor.RED + "The type of spawner unknown, so a pig spawner has been placed.");
                 		}
             		}
         		}
-            	else if (!this.setSpawner(spawner, lore.get(0).replace(ChatColor.DARK_RED.toString(), "").replaceAll(ChatColor.YELLOW.toString(), "").replaceAll(ChatColor.AQUA.toString(), "").replaceAll(ChatColor.DARK_GREEN.toString(), "")))
+            	else if (!this.setSpawner(block, lore.get(0)))
         		{
-            		this.setSpawner(spawner, "pig");
-        			event.getPlayer().sendMessage(ChatColor.RED + "The type of spawner isn't known, so a pig spawner has been placed.");
+            		this.setSpawner(block, "pig");
+        			event.getPlayer().sendMessage(ChatColor.RED + "The type of spawner unknown, so a pig spawner has been placed.");
         		}
         	}
     	}
     }
     
-    public boolean setSpawner(CraftCreatureSpawner spawner, String mob)
+    public boolean setSpawner(Block block, String mob)
     {
-    	for (Object o : this.spawnerMobs.values())
+    	mob = ChatColor.stripColor(mob);
+    	if (spawnerMobs.containsKey(mob.toLowerCase()))
     	{
-    		Mob m = (Mob) o;
-    		if (m.isMatch(mob.toLowerCase()))
-    		{
-    			spawner.setSpawnedType(m.TYPE);
-    			return true;
-    		}
+    		NMSHandler.setSpawner(block, spawnerMobs.get(mob.toLowerCase()).TYPE);
     	}
     	return false;
     }
